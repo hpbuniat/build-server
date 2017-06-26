@@ -15,7 +15,6 @@ Run the container from your project root directory.
         -v $PWD:/app \
     hpbuniat/build-server
 
-
 This runs the container with the common settings. It requires a ```build/``` directory in your project root.
 From the build dir it runs a ```robo install```.
 
