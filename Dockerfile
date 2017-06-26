@@ -2,18 +2,20 @@
 # it's a container to build the web app without changing the host
 # "containerize all the things"
 
-FROM tsari/jessie-php-fpm
-MAINTAINER Tibor Sári <tiborsari@gmx.de>
+FROM tsari/wheezy-apache-php-xdebug
+LABEL authors="Tibor Sári <tiborsari@gmx.de>, Hans-Peter Buniat <hpbuniat@googlemail.com>"
 
 # php
 ENV DEBIAN_FRONTEND noninteractive
-ENV NODE_VERSION 4.2.6
-ENV NPM_VERSION 3.7.1
-ENV COMPOSER_VERSION 1.2.2
+ENV NODE_VERSION 6.10.0
+ENV NPM_VERSION 3.10.10
+ENV COMPOSER_VERSION 1.4.1
 
 RUN \
     apt-get update -qqy && \
     apt-get install --no-install-recommends -qqy --force-yes \
+        apt-transport-https \
+        apt-utils \
         autoconf \
         automake \
         bzip2 \
@@ -45,20 +47,17 @@ RUN \
         libxslt-dev \
         libyaml-dev \
         make \
+        mysql-client \
         patch \
         xz-utils \
         zlib1g-dev \
         openssh-client \
-        postgresql-client \
         git \
         rsync \
         subversion \
         sudo \
         unzip \
-    && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-RUN set -ex \
+  && set -ex \
   && for key in \
     9554F04D7259F04124DE6B476D5A82AC7E37093B \
     94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
@@ -72,26 +71,34 @@ RUN set -ex \
     gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
   done
 
-RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz" \
-  && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
-  && gpg --verify SHASUMS256.txt.asc \
-  && grep " node-v$NODE_VERSION-linux-x64.tar.gz\$" SHASUMS256.txt.asc | sha256sum -c - \
-  && tar -xzf "node-v$NODE_VERSION-linux-x64.tar.gz" -C /usr/local --strip-components=1 \
-  && rm "node-v$NODE_VERSION-linux-x64.tar.gz" SHASUMS256.txt.asc
-
-
-RUN npm install -g npm@$NPM_VERSION
-RUN npm install -g node-gyp
-
+# install specified node, npm node-gyp and yarn
+# && fix broken npm installation after npm installation (missing /usr/local/lib/node_modules/npm/node_modules) ...
 # install composer
-RUN curl -S --insecure -o /usr/local/bin/composer https://getcomposer.org/download/$COMPOSER_VERSION/composer.phar
-RUN chmod +x /usr/local/bin/composer
+RUN rm -rf /usr/local/bin/npm \
+    && rm -rf /usr/local/lib/node_modules \
+    && rm -rf ~/.npm \
+  && curl -sSLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz" \
+  && curl -sSLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
+    && gpg --verify SHASUMS256.txt.asc \
+  && grep " node-v$NODE_VERSION-linux-x64.tar.gz\$" SHASUMS256.txt.asc | sha256sum -c - \
+    && tar -xzf "node-v$NODE_VERSION-linux-x64.tar.gz" -C /usr/local --strip-components=1 \
+    && rm "node-v$NODE_VERSION-linux-x64.tar.gz" SHASUMS256.txt.asc \
+  && curl -sS "https://dl.yarnpkg.com/debian/pubkey.gpg" | apt-key add - \
+    && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
+  && apt-get update -qqy \
+    && apt-get install --no-install-recommends -qqy --force-yes yarn \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+  && npm install -g node-gyp npm@$NPM_VERSION \
+  && cd /usr/local/lib/node_modules/npm \
+    && yarn install \
+  && curl -sS --insecure -o /usr/local/bin/composer https://getcomposer.org/download/$COMPOSER_VERSION/composer.phar \
+    && chmod +x /usr/local/bin/composer
 
 # copy build script
 COPY build.sh /usr/local/bin/build-application
 RUN chmod +x /usr/local/bin/build-application
 
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+ADD entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Set up the application directory

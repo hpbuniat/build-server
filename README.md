@@ -13,7 +13,7 @@ Run the container from your project root directory.
         -v /home/$USER:/home/$USER \
         -v /etc/localtime:/etc/localtime:ro \
         -v $PWD:/app \
-    tsari/build-server
+    hpbuniat/build-server
 
 
 This runs the container with the common settings. It requires a ```build/``` directory in your project root.
@@ -30,4 +30,4 @@ You can run different build commands by providing an alternative command on star
             -v /home/$USER:/home/$USER \
             -v /etc/localtime:/etc/localtime:ro \
             -v $PWD:/app \
-        tsari/build-server YOUR_COMMAND
+        hpbuniat/build-server YOUR_COMMAND
