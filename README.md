@@ -6,11 +6,11 @@ Run the container from your project root directory.
 
     #!/bin/bash
     docker run -it --rm \
+        -e "HOME=/home/$USER" \
         -e "USER" \
         -e "UID=$(id -u)" \
         -e "GID=$(id -g)" \
-        -e "HOME" \
-        -v /home/$USER:/home/$USER \
+        -v ~:/home/$USER \
         -v /etc/localtime:/etc/localtime:ro \
         -v $PWD:/app \
     hpbuniat/build-server
@@ -22,11 +22,11 @@ You can run different build commands by providing an alternative command on star
 
     #!/bin/bash
         docker run -it --rm \
+            -e "HOME=/home/$USER" \
             -e "USER" \
             -e "UID=$(id -u)" \
             -e "GID=$(id -g)" \
-            -e "HOME" \
-            -v /home/$USER:/home/$USER \
+            -v ~:/home/$USER \
             -v /etc/localtime:/etc/localtime:ro \
             -v $PWD:/app \
         hpbuniat/build-server YOUR_COMMAND
