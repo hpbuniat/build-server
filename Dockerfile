@@ -7,9 +7,9 @@ LABEL authors="Tibor Sári <tiborsari@gmx.de>, Hans-Peter Buniat <hpbuniat@googl
 
 # php
 ENV DEBIAN_FRONTEND noninteractive
-ENV NODE_VERSION 6.11.0
+ENV NODE_VERSION 6.11.3
 ENV NPM_VERSION 3.10.10
-ENV COMPOSER_VERSION 1.4.2
+ENV COMPOSER_VERSION 1.5.2
 
 RUN echo "deb http://ftp.de.debian.org/debian wheezy-backports main" >> /etc/apt/sources.list.d/backports.list
 
