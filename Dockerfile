@@ -2,69 +2,82 @@
 # it's a container to build the web app without changing the host
 # "containerize all the things"
 
-FROM tsari/wheezy-apache-php
-LABEL authors="Tibor Sári <tiborsari@gmx.de>, Hans-Peter Buniat <hpbuniat@googlemail.com>"
+FROM debian:stretch-slim
+MAINTAINER Hans-Peter Buniat <hans-peter.buniat@invia.de>
 
 # php
 ENV DEBIAN_FRONTEND noninteractive
-ENV NODE_VERSION 6.12.2
-ENV NPM_VERSION 3.10.10
-ENV COMPOSER_VERSION 1.5.6
+ENV NODE_VERSION 8.11.3
+ENV NPM_VERSION 5.6.0
+ENV COMPOSER_VERSION 1.6.5
 
-RUN echo "deb http://ftp.de.debian.org/debian wheezy-backports main" >> /etc/apt/sources.list.d/backports.list
+RUN mkdir -p /var/www/projects/flight-ibe && \
+    chown -R www-data:www-data /var/www/projects
 
-RUN \
-    apt-get update -qqy && \
-    apt-get install --no-install-recommends -qqy --force-yes \
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y wget \
+        ca-certificates \
         apt-transport-https \
+        gnupg \
+        git
+
+COPY sources.list /etc/apt/sources.list.d/invia.list
+RUN wget https://packages.sury.org/php/apt.gpg && \
+    apt-key add apt.gpg && \
+    wget https://s3-eu-west-1.amazonaws.com/tideways/packages/EEB5E8F4.gpg && \
+    apt-key add EEB5E8F4.gpg && \
+    apt-get update -qq && \
+    apt-get install --no-install-recommends -y --force-yes \
+        make \
+        curl \
+        mc \
+        openssl \
+        nano \
+        filter \
+        php7.2-apcu \
+        php7.2-cli \
+        php7.2-common \
+        php7.2-curl \
+        php7.2-dev \
+        php7.2-gd \
+        php7.2-igbinary \
+        php7.2-imagick \
+        php7.2-intl \
+        php7.2-json \
+        php7.2-ldap \
+        php7.2-mbstring \
+        php7.2-memcached \
+        php7.2-mongo \
+        php7.2-mysqlnd \
+        php7.2-opcache \
+        php7.2-soap \
+        php7.2-sqlite \
+        php7.2-xml \
+        php7.2-xdebug \
+        php-ssh2 \
+        openssh-server \
+        openssh-client \
+        supervisor \
+        locales \
+        tideways-daemon \
+        tideways-php \
+        tideways-cli \
         apt-utils \
         autoconf \
         automake \
         bzip2 \
-        ca-certificates \
         file \
-        g++ \
-        gcc \
-        git \
-        imagemagick \
-        libbz2-dev \
-        libc6-dev \
-        libcurl4-openssl-dev \
-        libevent-dev \
-        libffi-dev \
-        libgeoip-dev \
-        libglib2.0-dev \
-        libjpeg-dev \
-        liblzma-dev \
-        libmagickcore-dev \
-        libmagickwand-dev \
-        libmysqlclient-dev \
-        libncurses-dev \
-        libpng-dev \
-        libpq-dev \
-        libreadline-dev \
-        libsqlite3-dev \
-        libssl-dev \
-        libtool \
-        libwebp-dev \
-        libxml2-dev \
-        libxslt-dev \
-        libyaml-dev \
         make \
         mysql-client \
         patch \
         xz-utils \
         zlib1g-dev \
-        openssh-client \
         rsync \
         subversion \
         sudo \
         unzip \
-    && \
-    apt-get -t wheezy-backports install -qqy --force-yes \
-        git \
-    && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN set -ex \
       && for key in \
@@ -96,9 +109,9 @@ RUN rm -rf /usr/local/bin/npm \
   && apt-get update -qqy \
     && apt-get install --no-install-recommends -qqy --force-yes yarn \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-  && npm install -g node-gyp npm@$NPM_VERSION \
-  && cd /usr/local/lib/node_modules/npm \
-    && yarn install \
+  && npm install -g bower node-gyp npm@$NPM_VERSION \
+#  && cd /usr/local/lib/node_modules/npm \
+#    && yarn install \
   && curl -sS --insecure -o /usr/local/bin/composer https://getcomposer.org/download/$COMPOSER_VERSION/composer.phar \
     && chmod +x /usr/local/bin/composer
 
