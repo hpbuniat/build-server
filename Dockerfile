@@ -11,16 +11,14 @@ ENV NODE_VERSION 8.11.3
 ENV NPM_VERSION 5.6.0
 ENV COMPOSER_VERSION 1.6.5
 
-RUN mkdir -p /var/www/projects/flight-ibe && \
-    chown -R www-data:www-data /var/www/projects
-
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y wget \
         ca-certificates \
         apt-transport-https \
         gnupg \
-        git
+        git \
+        wget
 
 COPY sources.list /etc/apt/sources.list.d/invia.list
 RUN wget https://packages.sury.org/php/apt.gpg && \
@@ -35,26 +33,28 @@ RUN wget https://packages.sury.org/php/apt.gpg && \
         openssl \
         nano \
         filter \
-        php7.2-apcu \
-        php7.2-cli \
-        php7.2-common \
-        php7.2-curl \
-        php7.2-dev \
-        php7.2-gd \
-        php7.2-igbinary \
-        php7.2-imagick \
-        php7.2-intl \
-        php7.2-json \
-        php7.2-ldap \
-        php7.2-mbstring \
-        php7.2-memcached \
-        php7.2-mongo \
-        php7.2-mysqlnd \
-        php7.2-opcache \
-        php7.2-soap \
-        php7.2-sqlite \
-        php7.2-xml \
-        php7.2-xdebug \
+        php7.1 \
+        php7.1-apcu \
+        php7.1-cli \
+        php7.1-common \
+        php7.1-curl \
+        php7.1-dev \
+        php7.1-gd \
+        php7.1-igbinary \
+        php7.1-imagick \
+        php7.1-intl \
+        php7.1-json \
+        php7.1-ldap \
+        php7.1-mbstring \
+        php7.1-memcache \
+        php7.1-mcrypt \
+        php7.1-mongo \
+        php7.1-mysqlnd \
+        php7.1-opcache \
+        php7.1-soap \
+        php7.1-sqlite \
+        php7.1-xml \
+        php7.1-xdebug \
         php-ssh2 \
         openssh-server \
         openssh-client \
