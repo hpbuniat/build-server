@@ -7,9 +7,9 @@ LABEL authors="Tibor Sári <tiborsari@gmx.de>, Hans-Peter Buniat <hpbuniat@googl
 
 # php
 ENV DEBIAN_FRONTEND noninteractive
-ENV NODE_VERSION 6.12.2
-ENV NPM_VERSION 3.10.10
-ENV COMPOSER_VERSION 1.5.6
+ENV NODE_VERSION 8.11.3
+ENV NPM_VERSION 5.6.0
+ENV COMPOSER_VERSION 1.6.5
 
 RUN echo "deb http://ftp.de.debian.org/debian wheezy-backports main" >> /etc/apt/sources.list.d/backports.list
 
@@ -96,9 +96,9 @@ RUN rm -rf /usr/local/bin/npm \
   && apt-get update -qqy \
     && apt-get install --no-install-recommends -qqy --force-yes yarn \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-  && npm install -g node-gyp npm@$NPM_VERSION \
-  && cd /usr/local/lib/node_modules/npm \
-    && yarn install \
+  && npm install -g bower node-gyp npm@$NPM_VERSION \
+#  && cd /usr/local/lib/node_modules/npm \
+#    && yarn install \
   && curl -sS --insecure -o /usr/local/bin/composer https://getcomposer.org/download/$COMPOSER_VERSION/composer.phar \
     && chmod +x /usr/local/bin/composer
 
