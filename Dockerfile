@@ -9,7 +9,7 @@ MAINTAINER Hans-Peter Buniat <hans-peter.buniat@invia.de>
 ENV DEBIAN_FRONTEND noninteractive
 ENV NODE_VERSION 8.11.3
 ENV NPM_VERSION 5.6.0
-ENV COMPOSER_VERSION 1.6.5
+ENV COMPOSER_VERSION 1.9.0
 
 RUN apt-get update && \
     apt-get upgrade -y && \
