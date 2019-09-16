@@ -9,7 +9,7 @@ LABEL authors="Tibor Sári <tiborsari@gmx.de>, Hans-Peter Buniat <hpbuniat@googl
 ENV DEBIAN_FRONTEND noninteractive
 ENV NODE_VERSION 8.11.3
 ENV NPM_VERSION 5.6.0
-ENV COMPOSER_VERSION 1.6.5
+ENV COMPOSER_VERSION 1.9.0
 
 RUN echo "deb http://ftp.de.debian.org/debian wheezy-backports main" >> /etc/apt/sources.list.d/backports.list
 
