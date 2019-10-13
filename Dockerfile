@@ -20,7 +20,7 @@ RUN apt-get update && \
         git \
         wget
 
-COPY sources.list /etc/apt/sources.list.d/invia.list
+COPY sources.list /etc/apt/sources.list.d/ours.list
 RUN wget https://packages.sury.org/php/apt.gpg && \
     apt-key add apt.gpg && \
     wget https://s3-eu-west-1.amazonaws.com/tideways/packages/EEB5E8F4.gpg && \
